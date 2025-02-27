@@ -6,10 +6,14 @@ from sqlalchemy.sql import func
 from enum import Enum as PyEnum
 
 class AssignmentStatus(PyEnum):
+    SUBMITTED = "Submitted"
+    FUNDED = "Funded"
     OPEN = "Open"
     ASSIGNED = "Assigned"
+    PENDING = "Pending"
     COMPLETED = "Completed"
     CANCELLED = "Cancelled"
+    PAID_OUT = "Paid_Out"
 
 
 class Assignment(db.Model):
@@ -24,7 +28,7 @@ class Assignment(db.Model):
     description = db.Column(db.String(255), nullable=False)
     base_price = db.Column(db.Float, nullable=False)
     location_id = db.Column(db.Integer, ForeignKey(('locations.id')), nullable=False)
-    status = db.Column(db.Enum(AssignmentStatus), default=AssignmentStatus.OPEN)
+    status = db.Column(db.Enum(AssignmentStatus), default=AssignmentStatus.SUBMITTED)
     created_at = db.Column(db.DateTime, nullable=False, default=func.now()) #posted date
     updated_at = db.Column(db.DateTime, nullable=False, default=func.now())
 

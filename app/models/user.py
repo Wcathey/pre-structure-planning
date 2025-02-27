@@ -10,6 +10,7 @@ from .payment import Payment
 class UserType(PyEnum):
     CLIENT = "Client"
     PRESERVER = "Preserver"
+    ADMIN = "Admin"
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'

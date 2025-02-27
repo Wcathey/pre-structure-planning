@@ -1,0 +1,8 @@
+*use for Role Form verification on assigning admin roles to accounts
+
+def __init__(self, isClient=False, isPreserver=False, isAdmin=False):
+    if isClient and isPreserver:
+        raise ValueError("Only one of 'isClient' or 'isPreserver' can be True.")
+    self.isClient = isClient
+    self.isPreserver = isPreserver
+    self.isAdmin = isAdmin

@@ -24,7 +24,7 @@ class Assignment(db.Model):
     description = db.Column(db.String(255), nullable=False)
     base_price = db.Column(db.Float, nullable=False)
     location_id = db.Column(db.Integer, ForeignKey(('locations.id')), nullable=False)
-    status = db.Column(db.Enum('Open', 'Assigned', 'Completed', 'Cancelled', name='assignment_status'), default='Open')
+    status = db.Column(db.Enum(AssignmentStatus), default=AssignmentStatus.OPEN)
     created_at = db.Column(db.DateTime, nullable=False, default=func.now()) #posted date
     updated_at = db.Column(db.DateTime, nullable=False, default=func.now())
 
@@ -32,7 +32,6 @@ class Assignment(db.Model):
     client = relationship('User', foreign_keys=[client_id])
     preserver = relationship('Preserver', back_populates='assignments') #One Preserver per Assignment
     location = relationship('Location', back_populates='assignments')
-    reviews =  relationship('Review', back_populates='assignments', cascade='all, delete-orphan')
     payments = relationship('Payment', back_populates='assignment', lazy=True)
 
     def to_dict(self):
@@ -43,6 +42,8 @@ class Assignment(db.Model):
             'location_id': self.location_id,
             'status': self.status,
             'created_at': self.created_at,
-            'updated_at': self.updated_at
-
+            'updated_at': self.updated_at,
+            'client': self.client.to_dict(),  # Assuming 'User' model has a to_dict method
+            'preserver': self.preserver.to_dict() if self.preserver else None,
+            'location': self.location.to_dict()  # Assuming 'Location' model has a to_dict method
         }

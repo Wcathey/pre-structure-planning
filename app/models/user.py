@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 from sqlalchemy import Enum
 from enum import Enum as PyEnum #avoid confict with SQLAlchemy's Enum
 
+from .payment import Payment
 class UserType(PyEnum):
     CLIENT = "Client"
     PRESERVER = "Preserver"
@@ -29,11 +30,9 @@ class User(db.Model, UserMixin):
     updated_at = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
 
     #Relationships
-    reviews_given = relationship('Review', foreign_keys=["Review.reviewer_id"], backref="reviewer", lazy=True)
-    reviews_recieved = relationship('Review', foreign_keys=["Review.reviewee_id"], backref="reviewee", lazy=True)
     availability = relationship('Availability', uselist=False, back_populates='user')
-    client_payments = relationship('Payment', foreign_keys=["Payment.client_id"], back_populates="client")
-    preserver_payments = relationship('Payment', foreign_keys=["Payment.preserver_id"], back_populates="preserver")
+    client_payments = relationship('Payment', foreign_keys=[Payment.client_id], back_populates="client")
+    preserver_payments = relationship('Payment', foreign_keys=[Payment.preserver_id], back_populates="preserver")
 
     @property
     def password(self):

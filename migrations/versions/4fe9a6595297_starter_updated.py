@@ -1,8 +1,8 @@
-"""starter
+"""starter_updated
 
-Revision ID: 2c4724a56781
+Revision ID: 4fe9a6595297
 Revises: 
-Create Date: 2025-02-27 00:24:19.031587
+Create Date: 2025-02-27 12:09:11.019502
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2c4724a56781'
+revision = '4fe9a6595297'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,7 +39,7 @@ def upgrade():
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('phone_number', sa.String(length=15), nullable=False),
     sa.Column('hashed_password', sa.String(length=255), nullable=False),
-    sa.Column('user_type', sa.Enum('CLIENT', 'PRESERVER', name='usertype', native_enum=False), nullable=False),
+    sa.Column('user_type', sa.Enum('CLIENT', 'PRESERVER', 'ADMIN', name='usertype', native_enum=False), nullable=False),
     sa.Column('rating', sa.Float(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
@@ -80,7 +80,7 @@ def upgrade():
     sa.Column('description', sa.String(length=255), nullable=False),
     sa.Column('base_price', sa.Float(), nullable=False),
     sa.Column('location_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('OPEN', 'ASSIGNED', 'COMPLETED', 'CANCELLED', name='assignmentstatus'), nullable=True),
+    sa.Column('status', sa.Enum('SUBMITTED', 'FUNDED', 'OPEN', 'ASSIGNED', 'PENDING', 'COMPLETED', 'CANCELLED', 'PAID_OUT', name='assignmentstatus'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['client_id'], ['users.id'], ),

@@ -6,14 +6,15 @@ from sqlalchemy.sql import func
 from enum import Enum as PyEnum
 
 class AssignmentStatus(PyEnum):
-    SUBMITTED = "Submitted"
-    FUNDED = "Funded"
-    OPEN = "Open"
-    ASSIGNED = "Assigned"
-    PENDING = "Pending"
-    COMPLETED = "Completed"
-    CANCELLED = "Cancelled"
-    PAID_OUT = "Paid_Out"
+    PENDING = "Pending"#Client submits assignment
+    FUNDED = "Funded"   # Client pays and charge is cleared/ hold placed to cover expense
+    OPEN = "Open"   # Admin verifies payment, assignment pushed to market
+    ASSIGNED = "Assigned" # Perserver can now view assignment and claim
+    STARTED = "Started" # Perserver arrives and is scanning documents
+    SUBMITTED = "Submitted"  # Perserver completes all scans and goes into review
+    COMPLETED = "Completed" # Admin confirms completion and marks complete
+    CANCELLED = "Cancelled" # Assignment can be canceled due to many reasons by all parties for different reasons
+    PAID_OUT = "Paid_Out" # After completion All statuses have been covered and funds can be issued to preserver
 
 
 class Assignment(db.Model):
@@ -28,7 +29,7 @@ class Assignment(db.Model):
     description = db.Column(db.String(255), nullable=False)
     base_price = db.Column(db.Float, nullable=False)
     location_id = db.Column(db.Integer, ForeignKey(('locations.id')), nullable=False)
-    status = db.Column(db.Enum(AssignmentStatus), default=AssignmentStatus.SUBMITTED)
+    status = db.Column(db.Enum(AssignmentStatus), default=AssignmentStatus.PENDING)
     created_at = db.Column(db.DateTime, nullable=False, default=func.now()) #posted date
     updated_at = db.Column(db.DateTime, nullable=False, default=func.now())
 

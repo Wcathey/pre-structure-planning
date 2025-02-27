@@ -77,7 +77,7 @@ def get_assignment(assignment_id):
             return jsonify({'error': 'Unauthorized'}), 403
 
     elif current_user.user_type == 'Preserver':
-        if assignment.preserver_id != current_user.id or (assignment.status not in['Open', 'Completed']):
+        if assignment.preserver_id != current_user.id or (assignment.status not in['Open', 'Completed', 'Paid_out']):
             return jsonify({'error': 'Unauthorized'}), 403
 
     elif current_user.user_type == 'Admin':
@@ -103,7 +103,7 @@ def create_assignment():
         descriptions=data['description'],
         base_price=data['base_price'],
         location_id=data['location_id'],
-        status='Submitted'
+        status='Pending'
     )
     db.session.add(new_assignment)
     db.session.commit()
@@ -123,7 +123,7 @@ def update_assignment(assignment_id):
             return jsonify({"error": "Unauthorized"}), 403
         assignment.description = request.json.get('description', assignment.description)
 
-        # Clients can only cancel assignments, not change to other statuses
+        # Once assignment is created, Clients can only cancel assignments, not change to other statuses
         if request.json.get('status') and request.json.get('status')!= 'Cancelled':
             return jsonify({"error": "Unauthorized"}), 403
         assignment.status = request.json.get('status', assignment.status)
@@ -134,7 +134,7 @@ def update_assignment(assignment_id):
             return jsonify({"error": "Unauthorized"}), 403
 
         # Preservers can update status to 'Cancelled' or 'Pending', but not other statuses
-        if request.json.get('status') and request.json.get('status') not in ['Cancelled', 'Pending']:
+        if request.json.get('status') and request.json.get('status') not in ['Cancelled', 'Started', 'Submitted']:
             return jsonify({"error": "Unauthorized"}), 403
         assignment.status = request.json.get('status', assignment.status)
 
@@ -172,6 +172,7 @@ def delete_assignment(assignment_id):
 
 #Assign Preserver to Assignment
 @assignment_routes.route('/<int:assignment_id>/assign', methods=['PATCH'])
+@login_required
 def assign_preserver(assignment_id):
     # Only Admins can assign a preserver to an assignment
     if current_user.user_type != 'Admin':
@@ -202,6 +203,7 @@ def assign_preserver(assignment_id):
 #Mark Assignment as Completed, continue to pay out
 #This is different than cancelled assignments
 @assignment_routes.route('/<int:assignment_id>/complete', methods=['PATCH'])
+@login_required
 def complete_assignment(assignment_id):
 
     # Only Admins can mark assignments Completed
@@ -211,8 +213,8 @@ def complete_assignment(assignment_id):
     if not assignment:
         return jsonify({"error": "Assignment not found"}), 404
 
-    if assignment.status not in ["Assigned", "Pending"]:
-        return jsonify({"error": "Assignment must be assigned or Set to Pending from Preserver before completion"}), 400
+    if assignment.status != 'Submitted':
+        return jsonify({"error": "Assignment must be submitted from preserver before completion"}), 400
 
     assignment.status = "Completed"
     assignment.updated_at = func.now()
@@ -222,6 +224,7 @@ def complete_assignment(assignment_id):
 
 #Cancel an Assignment
 @assignment_routes.route('/<int:assignment_id>/cancel', methods=['PATCH'])
+@login_required
 def cancel_assignment(assignment_id):
     assignment = Assignment.query.get(assignment_id)
     if not assignment:
@@ -237,17 +240,23 @@ def cancel_assignment(assignment_id):
     db.session.commit()
     return jsonify(assignment.to_dict())
 
-#Filtering Routes | Searching Routes
+#Filtering Routes | Searching Routes | ***ADMIN USE ONLY***
 
 #Retrieve Assignment by Status
 @assignment_routes.route('/status/<string:status>')
+@login_required
 def get_assignments_by_status(status):
+    if current_user.user_type != 'Admin':
+        return jsonify({"error": "Unauthorized"}), 403
     assignments = Assignment.query.filter_by(status=status).all()
     return jsonify([assignment.to_dict() for assignment in assignments])
 
 #Retrieve Assignment for a Specific User (Client or Preserver)
 @assignment_routes.route('/user/<int:user_id>')
+@login_required
 def get_user_assignments(user_id):
+    if current_user.user_type != 'Admin':
+        return jsonify({"error": "Unauthorized"}), 403
     assignments = Assignment.query.filter(
         (Assignment.client_id == user_id) | (Assignment.preserver_id == user_id)
     ).all()
@@ -255,7 +264,10 @@ def get_user_assignments(user_id):
 
 #Search Assignments by Keyword in Description
 @assignment_routes.route('/search')
+@login_required
 def search_assignments():
+    if current_user.user_type != 'Admin':
+        return jsonify({"error": "Unauthorized"}), 403
     keyword = request.args.get('q', '')
     assignments = Assignment.query.filter(Assignment.description.ilike(f'%{keyword}%')).all()
     return jsonify([assignment.to_dict() for assignment in assignments])

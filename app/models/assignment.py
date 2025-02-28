@@ -6,15 +6,15 @@ from sqlalchemy.sql import func
 from enum import Enum as PyEnum
 
 class AssignmentStatus(PyEnum):
-    PENDING = "Pending"#Client submits assignment
-    FUNDED = "Funded"   # Client pays and charge is cleared/ hold placed to cover expense
-    OPEN = "Open"   # Admin verifies payment, assignment pushed to market
-    ASSIGNED = "Assigned" # Perserver can now view assignment and claim
-    STARTED = "Started" # Perserver arrives and is scanning documents
-    SUBMITTED = "Submitted"  # Perserver completes all scans and goes into review
+    PENDING = "Pending"     # Client submits assignment
+    FUNDED = "Funded"       # Client pays and charge is cleared/ hold placed to cover expense
+    OPEN = "Open"           # Admin verifies payment, assignment pushed to market
+    ASSIGNED = "Assigned"   # Perserver can now view assignment and claim
+    STARTED = "Started"     # Perserver arrives and is scanning documents
+    SUBMITTED = "Submitted" # Perserver completes all scans and goes into review
     COMPLETED = "Completed" # Admin confirms completion and marks complete
     CANCELLED = "Cancelled" # Assignment can be canceled due to many reasons by all parties for different reasons
-    PAID_OUT = "Paid_Out" # After completion All statuses have been covered and funds can be issued to preserver
+    PAID_OUT = "Paid_Out"   # After completion All statuses have been covered and funds can be issued to preserver
 
 
 class Assignment(db.Model):

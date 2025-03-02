@@ -252,6 +252,7 @@ def get_assignments_by_status(status):
     return jsonify([assignment.to_dict() for assignment in assignments])
 
 #Retrieve Assignment for a Specific User (Client or Preserver)
+# For getting assignments for logged in user use get_assignments
 @assignment_routes.route('/user/<int:user_id>')
 @login_required
 def get_user_assignments(user_id):

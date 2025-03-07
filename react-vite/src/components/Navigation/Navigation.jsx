@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import ProfileButton from "./ProfileButton";
 import "./Navigation.css";
 
 function Navigation() {
@@ -9,9 +8,6 @@ function Navigation() {
         <NavLink to="/">Home</NavLink>
       </li>
 
-      <li>
-        <ProfileButton />
-      </li>
     </ul>
   );
 }

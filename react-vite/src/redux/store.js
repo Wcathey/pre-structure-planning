@@ -10,7 +10,7 @@ import {
 
   const rootReducer = combineReducers({
     session: sessionReducer,
-    assignmentReducer
+    assignment: assignmentReducer
   });
 
   let enhancer;

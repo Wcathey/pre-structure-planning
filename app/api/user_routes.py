@@ -23,3 +23,9 @@ def user(id):
     """
     user = User.query.get(id)
     return user.to_dict()
+
+@user_routes.route('/demo')
+def demo_accounts():
+
+    accounts = User.query.filter(User.isDemo)
+    return {'accounts': [user.to_dict() for user in accounts]}

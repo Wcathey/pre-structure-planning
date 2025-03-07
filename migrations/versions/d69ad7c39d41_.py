@@ -1,8 +1,8 @@
-"""starter_updated
+"""empty message
 
-Revision ID: 4fe9a6595297
+Revision ID: d69ad7c39d41
 Revises: 
-Create Date: 2025-02-27 12:09:11.019502
+Create Date: 2025-03-07 11:01:05.130018
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4fe9a6595297'
+revision = 'd69ad7c39d41'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,6 +41,7 @@ def upgrade():
     sa.Column('hashed_password', sa.String(length=255), nullable=False),
     sa.Column('user_type', sa.Enum('CLIENT', 'PRESERVER', 'ADMIN', name='usertype', native_enum=False), nullable=False),
     sa.Column('rating', sa.Float(), nullable=True),
+    sa.Column('isDemo', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
@@ -80,7 +81,7 @@ def upgrade():
     sa.Column('description', sa.String(length=255), nullable=False),
     sa.Column('base_price', sa.Float(), nullable=False),
     sa.Column('location_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('SUBMITTED', 'FUNDED', 'OPEN', 'ASSIGNED', 'PENDING', 'COMPLETED', 'CANCELLED', 'PAID_OUT', name='assignmentstatus'), nullable=True),
+    sa.Column('status', sa.Enum('PENDING', 'FUNDED', 'OPEN', 'ASSIGNED', 'STARTED', 'SUBMITTED', 'COMPLETED', 'CANCELLED', 'PAID_OUT', name='assignmentstatus'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['client_id'], ['users.id'], ),

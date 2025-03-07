@@ -27,6 +27,7 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
     user_type = db.Column(Enum(UserType, native_enum=False), nullable=False) #Client or Preserver
     rating = db.Column(db.Float)
+    isDemo = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=func.now())
     updated_at = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
 
